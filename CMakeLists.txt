@@ -9,6 +9,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(prometheus-cpp REQUIRED)
 
 add_executable(myapp main.cpp)
-target_link_libraries(myapp prometheus-cpp::prometheus-cpp)
+target_link_libraries(myapp prometheus-cpp::core prometheus-cpp::pull)
 
 install(TARGETS myapp DESTINATION bin)

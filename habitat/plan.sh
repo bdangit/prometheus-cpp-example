@@ -1,13 +1,13 @@
 pkg_name=prometheus-cpp-example
 pkg_origin=bdangit
-pkg_version=0.1.0
+pkg_version=0.1.1
 pkg_license=('MIT')
 pkg_build_deps=(
   core/gcc
   core/cmake
   core/make
   core/pkg-config
-  core/prometheus-cpp
+  bdangit/prometheus-cpp
 )
 pkg_deps=(
   core/glibc
@@ -18,22 +18,32 @@ pkg_deps=(
 
 pkg_bin_dirs=(bin)
 
-BUILDDIR='build'
+do_begin() {
+  export HAB_ENV_CMAKE_FIND_ROOT_PATH_SEPARATOR=";"
+  export HAB_ENV_CMAKE_FIND_ROOT_PATH_TYPE="aggregate"
+}
+
+do_setup_environment() {
+  set_buildtime_env BUILDDIR "_build"
+}
 
 do_prepare() {
-  rm -rf "${BUILDDIR}"
+  mkdir -p "${BUILDDIR}"
 }
 
 do_build() {
-  mkdir -p "${BUILDDIR}"
-  cmake -H./ \
-    -B${BUILDDIR} \
+  pushd "${BUILDDIR}" || exit 1
+  cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
-    -Dprometheus-cpp_DIR="$(pkg_path_for core/prometheus-cpp)/lib64/cmake/prometheus-cpp"
-  make -C "${BUILDDIR}" VERBOSE=${DEBUG}
+    -DCMAKE_FIND_ROOT_PATH="${CMAKE_FIND_ROOT_PATH}" \
+    ..
+  make
+  popd || exit 1
 }
 
 do_install() {
-  make -C "${BUILDDIR}" install
+  pushd "${BUILDDIR}" || exit 1
+  make install
+  popd || exit 1
 }

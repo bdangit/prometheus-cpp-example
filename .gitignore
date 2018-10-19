@@ -72,3 +72,5 @@ test/builder-api/node_modules
 test/builder-api/services.log
 tmp/
 pkgs/
+results/
+_build/
